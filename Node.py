@@ -14,6 +14,14 @@ class Node(object):
         return str(self)
 
 
+    def __lt__(self,other):
+        # Heapq uses the less than (lt) comparator.
+        return len(self) < len(other)
+
+
+    def __len__(self):
+        return len(self._neighs)
+
 
 
 class Graph(object):

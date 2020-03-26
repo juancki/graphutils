@@ -12,6 +12,12 @@ def DFSearchValue(G,value):
         if vertex.data == value:
             return vertex
 
+def DFSearch(G, satFunc, root = None):
+    ''' Same def as in BFSearch'''
+    for V in DFTraverse(G,root):
+        if satFunc(G,V):
+            return V
+
 
 def DFSearchNode(G,start,node):
     if DEBUG >= 1: print('DFSearchNode From {} To {}'.format(start,node))
