@@ -8,7 +8,10 @@ class Node(object):
         self._neighs = []
 
     def __str__(self):
-        return '{}'.format(self.name)
+        #   if self.data is None:
+        #       return '({}:)'.format(self.name)
+        #   return '({}:{})'.format(self.name,self.data)
+        return self.name
 
     def __repr__(self):
         return str(self)
@@ -38,6 +41,12 @@ class Graph(object):
 
     
     def addVertex(self, vertex):
+        '''Add a previously created graphutils.Node or descriptor.
+        E.g:
+            G = Graph()
+            G.addVertex(node)
+            or 
+            G.addVertex('descriptor')'''
         if type(vertex) != Node:
             vertex = Node(vertex)
 
@@ -56,8 +65,6 @@ class Graph(object):
 
     def edges(self):
         return self._edges
-
-    
 
     @staticmethod
     def getDegrees(graph):
@@ -137,6 +144,21 @@ def graphFromFile(filepath):
 
 
 
+def transpose(G):
+    Gt = Graph()
+    Gt.isDirected = G.isDirected
+    for v in G.vertexes().values():
+        n = Node(v.name)
+        n.data = 'T'
+        Gt.addVertex(n)
+
+    VsT  = Gt.vertexes() # Vertexes of the transpose
+    for vname in G.vertexes().keys():
+        vt = VsT[vname]
+        for u in G.Adj(vname):
+            ut = VsT[u.name]
+            Gt.addEdge(ut,vt)
+    return Gt
 
 
 
