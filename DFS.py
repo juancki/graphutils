@@ -50,7 +50,7 @@ def DFTraverse(G,start = None):
             color[V] = GRAY
             yield V,(initTime[V],None)
             stack.append(V)
-            for neigh in reversed(G.Adj(V)):
+            for neigh  in G.Adj(V):
                 if color[neigh] == WHITE:
                     parent[neigh] = V
                     stack.append(neigh)

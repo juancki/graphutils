@@ -1,11 +1,12 @@
-
+from collections import defaultdict
 
 
 class Node(object):
     def __init__(self, name, data=None):
         self.name = name
         self.data = data
-        self._neighs = []
+        self._neighs = set()
+        self._ncost = defaultdict(lambda:1) # stores the cost to neighbours. Default value is 1.
 
     def __str__(self):
         #   if self.data is None:
@@ -34,6 +35,7 @@ class Graph(object):
         self._nodes = {}
         self._edges = []
         self._meta = {}
+        self._default_unitary_cost = True
 
 
     def __len__(self):
@@ -53,11 +55,16 @@ class Graph(object):
         self._nodes[vertex.name] = vertex
         
 
-    def addEdge(self, u, v):
+    def addEdge(self, u, v, cost=None):
         self._edges.append((u,v))
-        u._neighs.append(v)
+        u._neighs.add(v)
         if not self.isDirected:
-            v._neighs.append(u)
+            v._neighs.add(u)
+        if cost is not None:
+            self._default_unitary_cost = False
+            u._ncost[v] = cost
+            if not self.isDirected:
+                v._ncost[u] = cost
 
     def vertexes(self):
         return self._nodes
@@ -65,6 +72,20 @@ class Graph(object):
 
     def edges(self):
         return self._edges
+    
+    def cost(self,u,v):
+        '''Returns the cost from going from vertex u to v.'''
+        if type(u) != Node:
+            u = self._nodes[u]
+        if type(v) != Node:
+            v = self._nodes[v]
+        if self._default_unitary_cost:
+            if v in u._neighs:
+                return 1
+            else:
+                return None
+        return u._ncost[v]
+
 
     @staticmethod
     def getDegrees(graph):
