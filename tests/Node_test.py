@@ -66,7 +66,7 @@ with open(FILEPATH_FROM, 'w') as f:
 
 import os
 os.remove(FILEPATH_FROM)
-os.remove(FILEPATH_FROM+'.dot')
 os.remove(FILEPATH_TO)
+os.remove(FILEPATH_TO+'.dot')
 
 

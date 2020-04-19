@@ -127,12 +127,16 @@ def graphToFile(graph,filepath):
             print('{}-{}'.format(e[0],e[1]),file=f)
         
 
-def graphToDOTFile(graph,filepath):
-    def printEdge(edge, f, graph):
-        if graph.isDirected:
-            print('{} -> {};'.format(*edge),file=f)
+def graphToDOTFile(graph,filepath,printCost=False):
+    def printEdge(edge, f, graph, printCost=False):
+        if printCost:
+            label = '[label="{}"]'.format(graph.cost(*edge))
         else:
-            print('{} -- {};'.format(*edge),file=f)
+            label = ''
+        if graph.isDirected:
+            print('{} -> {} {};'.format(*edge,label),file=f)
+        else:
+            print('{} -- {} {};'.format(*edge,label),file=f)
 
     def printVertex(v,f):
         if 'DOTFile_attributes' in v._meta:
@@ -162,7 +166,7 @@ def graphToDOTFile(graph,filepath):
 
         print('// Describing the edges.',file=f)
         for e in graph.edges():
-            printEdge(e,f,graph)
+            printEdge(e,f,graph, printCost=True)
             
         print('}',file=f)
         print('// End of Script',file=f)
