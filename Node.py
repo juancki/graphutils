@@ -7,6 +7,7 @@ class Node(object):
         self.data = data
         self._neighs = set()
         self._ncost = defaultdict(lambda:1) # stores the cost to neighbours. Default value is 1.
+        self._meta = {} # space to save Node related info.
 
     def __str__(self):
         #   if self.data is None:
@@ -30,7 +31,8 @@ class Node(object):
 
 class Graph(object):
 
-    def __init__(self, isDirected=False):
+    def __init__(self, name=None, isDirected=False):
+        self.name = name
         self.isDirected = isDirected
         self._nodes = {}
         self._edges = []
@@ -79,12 +81,12 @@ class Graph(object):
             u = self._nodes[u]
         if type(v) != Node:
             v = self._nodes[v]
-        if self._default_unitary_cost:
-            if v in u._neighs:
+        if v in u._neighs:
+            if self._default_unitary_cost:
                 return 1
             else:
-                return None
-        return u._ncost[v]
+                return u._ncost[v]
+        return None
 
 
     @staticmethod
@@ -110,6 +112,8 @@ class Graph(object):
         return str(self)
 
     def __str__(self):
+        if self.name is not None:
+            return '{}({})'.format(self.name, self._nodes.keys())
         return 'G({})'.format(self._nodes.keys())
 
 def graphToFile(graph,filepath):
@@ -123,7 +127,46 @@ def graphToFile(graph,filepath):
             print('{}-{}'.format(e[0],e[1]),file=f)
         
 
-    
+def graphToDOTFile(graph,filepath):
+    def printEdge(edge, f, graph):
+        if graph.isDirected:
+            print('{} -> {};'.format(*edge),file=f)
+        else:
+            print('{} -- {};'.format(*edge),file=f)
+
+    def printVertex(v,f):
+        if 'DOTFile_attributes' in v._meta:
+            # https://en.wikipedia.org/wiki/DOT_(graph_description_language)#Attributes
+            attr = ['{}={}'.format(k,v) for k,v in v._meta['DOTFile_attributes']]
+            print('{} [label={},{}];'.format(v.name,v.name,','.join(attr)), file=f)
+        elif v.data is not None:
+            label = '{}({})'.format(v.name,v.data)
+            print('{} [label="{}"];'.format(v.name,label),file=f)
+
+
+    with open(filepath, 'w') as f:
+        graphtype = 'graph' if not graph.isDirected else 'digraph'
+        print('// DOT file created by script.',file=f)
+
+        print("{} {} {{".format(graphtype, graph.name),file=f)
+        if 'DOTFile_style' in graph._meta:
+            print('// Custom DOT config.',file=f)
+            pass # TODO: add set graph attributes/style based on _meta data.
+        else:
+            print('// Default DOT config.',file=f)
+            print('node[shape =record];',file=f)
+
+        print('// Describing the vertexes.',file=f)
+        for v in graph.vertexes().values():
+            printVertex(v,f)
+
+        print('// Describing the edges.',file=f)
+        for e in graph.edges():
+            printEdge(e,f,graph)
+            
+        print('}',file=f)
+        print('// End of Script',file=f)
+
 
 def graphFromFile(filepath):
     def skipBlankLines(lines):

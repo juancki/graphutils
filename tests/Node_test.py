@@ -1,7 +1,7 @@
 
 
 
-from ..Node import Node, Graph, graphFromFile, graphToFile
+from ..Node import Node, Graph, graphFromFile, graphToFile, graphToDOTFile
 
 
 
@@ -34,6 +34,7 @@ with open(FILEPATH_FROM, 'w') as f:
     A = vertexes['A'] 
     B = vertexes['B'] 
     C = vertexes['C'] 
+    A.data = 32
 
     assert B in A._neighs
     assert not A in B._neighs
@@ -57,6 +58,7 @@ with open(FILEPATH_FROM, 'w') as f:
     assert A in E._neighs
 
     graphToFile(G,FILEPATH_TO)
+    graphToDOTFile(G,FILEPATH_TO+'.dot')
     Q = graphFromFile(FILEPATH_TO)
 
 
@@ -64,6 +66,7 @@ with open(FILEPATH_FROM, 'w') as f:
 
 import os
 os.remove(FILEPATH_FROM)
+os.remove(FILEPATH_FROM+'.dot')
 os.remove(FILEPATH_TO)
 
 
