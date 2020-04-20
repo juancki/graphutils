@@ -4,6 +4,7 @@
 
 from collections import defaultdict
 from .run import DEBUG
+from .Node import graph2mat
 import heapq
 
 
@@ -66,6 +67,40 @@ def Dijstra(Graph, root):
 def DagShortestPath(G,root):
     from .TopSort import TopologicalSort
     result = TopologicalSort(G)
+
+
+def AllPairsShortestPaths(G):
+    ''' '''
+    W = graph2mat(G)
+    L2m = W
+    n = len(G)
+    m = 1
+    while m-1 < n:
+        Lm = L2m
+        L2m  = ExtendShortestPaths(Lm,Lm)
+        m = 2*m
+    return Lm
+
+def ExtendShortestPaths(L,W):
+    n = len(L)
+    Lp = [[None for i in range(n)] for j in range(n)]
+    for i in range(n):
+        for j in range(n):
+            for k in range(n): # this loops looks if its worth passing through k
+                Lp[i][j] = ESPmin(Lp[i][j],L[i][k],W[k][j])
+    return Lp
+
+def ESPmin(lp,l,w):
+    if lp is None:
+        if l is not None and w is not None:
+            return l+w
+        return None
+   
+    if l is not None and w is not None:
+        return min(lp,l+w)
+    return lp
+
+
 
 
 

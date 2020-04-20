@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 
 class Node(object):
@@ -34,7 +34,7 @@ class Graph(object):
     def __init__(self, name=None, isDirected=False):
         self.name = name
         self.isDirected = isDirected
-        self._nodes = {}
+        self._nodes = OrderedDict()
         self._edges = []
         self._meta = {}
         self._default_unitary_cost = True
@@ -229,6 +229,33 @@ def transpose(G):
     return Gt
 
 
+def graph2mat(G, edgemap=None):
+    mat = []
+    order = {}
+    index = [0]*len(G)
+    G._meta['node2index'] = order
+    G._meta['index2node'] = index
+    i = 0
+    for node in G.vertexes().values():
+        mat.append([None for i in range(len(G))])
+        order[node] = i
+        index[i] = node
+        mat[i][i] = 0
+        i+=1
+    
+    if edgemap is None:
+        edgemap = G.cost
+
+    isDirected = G.isDirected
+    for edge in G.edges():
+        c = edgemap(*edge)
+        i = order[edge[0]]
+        j = order[edge[1]]
+        mat[i][j] = c
+        if not isDirected:
+            mat[j][i] = c
+
+    return mat
 
 
 

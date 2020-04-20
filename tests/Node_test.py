@@ -1,7 +1,7 @@
 
 
 
-from ..Node import Node, Graph, graphFromFile, graphToFile, graphToDOTFile
+from ..Node import Node, Graph, graphFromFile, graphToFile, graphToDOTFile, graph2mat
 
 
 
@@ -57,6 +57,7 @@ with open(FILEPATH_FROM, 'w') as f:
 
     assert A in E._neighs
 
+    W = graph2mat(G)
     graphToFile(G,FILEPATH_TO)
     graphToDOTFile(G,FILEPATH_TO+'.dot')
     Q = graphFromFile(FILEPATH_TO)
