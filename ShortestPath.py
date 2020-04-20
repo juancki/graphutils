@@ -63,5 +63,10 @@ def Dijstra(Graph, root):
                     heapq.heappush(queue,(cost+edgecost,neigh))
             
                 
+def DagShortestPath(G,root):
+    from .TopSort import TopologicalSort
+    result = TopologicalSort(G)
+
+
 
 
